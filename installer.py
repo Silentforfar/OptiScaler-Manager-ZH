@@ -5,9 +5,11 @@
 - 任何被覆盖的同名文件先备份到游戏目录下的 .optiscaler_backup/
 - 卸载只依据 manifest 记录，绝不猜测、绝不递归删游戏目录
 """
+import ctypes
 import hashlib
 import os
 import shutil
+from ctypes import wintypes
 from datetime import datetime
 
 import store
@@ -16,6 +18,97 @@ PRODUCT = "OptiScaler-Manager"
 VERSION = "1.0.0"
 CORE_DLL = "OptiScaler.dll"
 MODEL_FILE = "nvngx_dlssnr.dll"
+
+# 常见的代理 DLL 名。同一个目录里同时存在两个注入器，基本必炸。
+PROXY_NAMES = (
+    "dxgi.dll", "d3d9.dll", "d3d10.dll", "d3d11.dll", "d3d12.dll",
+    "winmm.dll", "version.dll", "dbghelp.dll", "wininet.dll", "winhttp.dll",
+    "dinput8.dll", "dsound.dll", "opengl32.dll", "binkw64.dll", "bink2w64.dll",
+    "xinput1_1.dll", "xinput1_2.dll", "xinput1_3.dll", "xinput1_4.dll",
+    "xinput9_1_0.dll", "xinputuap.dll",
+)
+
+INJECTOR_HINTS = ("optiscaler", "reshade", "juij", "非线性列车", "special k",
+                  "specialk", "dlss enabler", "nvngx", "uniscaler", "dlssg")
+
+
+def _file_version_info(path):
+    """读 PE 版本资源里的公司/产品名，读不到就返回空 dict。"""
+    try:
+        ver = ctypes.WinDLL("version")
+    except OSError:
+        return {}
+    size = ver.GetFileVersionInfoSizeW(ctypes.c_wchar_p(path), None)
+    if not size:
+        return {}
+    buf = ctypes.create_string_buffer(size)
+    if not ver.GetFileVersionInfoW(ctypes.c_wchar_p(path), 0, size, buf):
+        return {}
+    ptr = ctypes.c_void_p()
+    length = wintypes.UINT()
+    out = {}
+    if not ver.VerQueryValueW(buf, ctypes.c_wchar_p(r"\VarFileInfo\Translation"),
+                              ctypes.byref(ptr), ctypes.byref(length)):
+        return {}
+    if not ptr.value or length.value < 4:
+        return {}
+    words = ctypes.cast(ptr, ctypes.POINTER(wintypes.WORD))
+    lang, codepage = words[0], words[1]
+    for key in ("CompanyName", "ProductName", "FileDescription", "OriginalFilename"):
+        sub = r"\StringFileInfo\%04x%04x\%s" % (lang, codepage, key)
+        if ver.VerQueryValueW(buf, ctypes.c_wchar_p(sub),
+                              ctypes.byref(ptr), ctypes.byref(length)) and ptr.value:
+            out[key] = ctypes.wstring_at(ptr.value, length.value).rstrip("\x00")
+    return out
+
+
+def detect_conflicts(target_dir, proxy):
+    """扫描目标目录里已存在的注入器。
+
+    返回 [{'name','size','company','product','desc','level','replaces_target'}]
+    level: 'danger'（会被本次安装覆盖）| 'warn'（共存会互相干扰）
+    """
+    found = []
+    for name in PROXY_NAMES:
+        path = os.path.join(target_dir, name)
+        if not os.path.isfile(path):
+            continue
+        info = _file_version_info(path)
+        company = (info.get("CompanyName") or "").strip()
+        product = (info.get("ProductName") or "").strip()
+        desc = (info.get("FileDescription") or "").strip()
+        blob = " ".join((company, product, desc)).lower()
+        try:
+            size = os.path.getsize(path)
+        except OSError:
+            continue
+
+        if "microsoft" in blob:
+            continue                      # 系统 DLL，正常
+        known = any(h in blob for h in INJECTOR_HINTS)
+        suspicious = size > 2 * 1024 * 1024
+        if not (known or suspicious):
+            continue
+
+        found.append({
+            "name": name, "size": size, "company": company,
+            "product": product or desc, "level": "danger",
+            "replaces_target": name.lower() == proxy.lower(),
+        })
+
+    # ReShade 的配置痕迹（它的 DLL 可能叫别的名字）
+    if (os.path.exists(os.path.join(target_dir, "ReShade.ini"))
+            or os.path.isdir(os.path.join(target_dir, "reshade-shaders"))):
+        found.append({"name": "ReShade 配置", "size": 0, "company": "",
+                      "product": "ReShade", "level": "warn",
+                      "replaces_target": False})
+
+    # 非本次覆盖目标的，降级成警告
+    for item in found:
+        if not item["replaces_target"] and item["level"] == "danger":
+            item["level"] = "warn"
+    return found
+
 
 PROXIES = [
     ("dxgi.dll", "dxgi.dll   （推荐的默认值，绝大多数 DX12 游戏）"),

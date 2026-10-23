@@ -474,9 +474,25 @@ class App(tk.Tk):
             messagebox.showerror("无法安装", msg)
             return
 
-        if not messagebox.askyesno("确认安装",
-                                   "游戏：%s\n注入目标：%s\n安装目录：%s\n代理文件：%s\n\n开始安装？"
-                                   % (name, choice["rel"], gdir, proxy)):
+        conflicts = installer.detect_conflicts(gdir, proxy)
+        if conflicts:
+            lines = []
+            for c in conflicts:
+                size = ("%.1f MB" % (c["size"] / 1048576)) if c["size"] else "—"
+                what = c["product"] or c["company"] or "未知来源"
+                tag = "会被本次安装覆盖（先备份）" if c["replaces_target"] else "同时存在，可能互相冲突"
+                lines.append("  · %s   %s   %s\n      %s" % (c["name"], size, what, tag))
+            if not messagebox.askyesno(
+                    "检测到已有注入器",
+                    "这个目录里已经装了别的东西：\n\n%s\n\n"
+                    "同一个目录里同时存在两个注入器，游戏很可能直接打不开。\n"
+                    "建议先把旧的改名成 .disabled 再装。\n\n"
+                    "仍然继续安装？" % "\n".join(lines)):
+                return
+            self.log("检测到 %d 个已有注入器，用户选择继续" % len(conflicts), "warn")
+        elif not messagebox.askyesno("确认安装",
+                                     "游戏：%s\n注入目标：%s\n安装目录：%s\n代理文件：%s\n\n开始安装？"
+                                     % (name, choice["rel"], gdir, proxy)):
             return
 
         self.btn_install.configure(text="正在安装…", state="disabled")
