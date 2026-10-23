@@ -68,8 +68,14 @@ def detect_conflicts(target_dir, proxy):
     返回 [{'name','size','company','product','desc','level','replaces_target'}]
     level: 'danger'（会被本次安装覆盖）| 'warn'（共存会互相干扰）
     """
+    # 已经由本工具装进去的文件不算冲突
+    manifest = store.read_manifest(target_dir)
+    own = {f.get("rel", "").lower() for f in (manifest or {}).get("files", [])}
+
     found = []
     for name in PROXY_NAMES:
+        if name.lower() in own:
+            continue
         path = os.path.join(target_dir, name)
         if not os.path.isfile(path):
             continue
