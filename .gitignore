@@ -26,3 +26,6 @@ preview.png
 .vscode/
 .idea/
 *.swp
+
+# 发布产物
+release/

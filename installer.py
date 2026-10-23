@@ -15,7 +15,7 @@ from datetime import datetime
 import store
 
 PRODUCT = "OptiScaler-Manager"
-VERSION = "1.0.0"
+VERSION = "1.0.1"
 CORE_DLL = "OptiScaler.dll"
 MODEL_FILE = "nvngx_dlssnr.dll"
 
