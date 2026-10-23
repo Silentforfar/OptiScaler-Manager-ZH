@@ -120,17 +120,29 @@ python test_conflict.py # 已有注入器识别（含系统 DLL 不误报）
 
 `.gitignore` 已忽略 `payload/` 下的所有内容，只保留说明文件。
 
+## 致谢
+
+这个工具本身只是安装器，真正干活的是别人的成果：
+
+- **[OptiScaler](https://github.com/optiscaler/OptiScaler)** — nitec 及所有贡献者。
+  超分接管、帧生成、伪装这一整套能力都来自它，本工具安装的就是它。
+- **OptiScaler DLSSNR 分支** — dag。把 DLSS 5 神经渲染做成 OptiScaler 的一个额外 pass。
+- **[MFG-Unlocker](https://github.com/dashdogy/MFG-Unlocker)** — dashdogy。
+  让 40 系也能用多帧生成，MIT 许可。
+- **[RenoDX](https://github.com/clshortfuse/renodx)** — clshortfuse。
+  神经渲染的色彩合成方式取自这里，见 `Licenses/RenoDX_ATTRIBUTION.txt`。
+- **中文菜单** — 本项目维护的 776 条翻译与二进制改写工具。
+
+如果你觉得这套东西好用，功劳是他们的。
+
 ## 许可
 
 本项目代码以 MIT 许可发布，见 [LICENSE](LICENSE)。
 
-依赖与参考：
+随安装包分发的 OptiScaler 相关文件遵循各自的许可（见 `Licenses/`）。
+**不包含** NVIDIA 的 `nvngx_dlssnr.dll`（神经渲染模型），该文件需自行准备。
 
-- [OptiScaler](https://github.com/optiscaler/OptiScaler) — MIT
-- [MFG-Unlocker](https://github.com/dashdogy/MFG-Unlocker) — MIT
-- DLSS 神经渲染的色彩合成方式来自 [RenoDX](https://github.com/clshortfuse/renodx)（MIT），见原始包 `Licenses/RenoDX_ATTRIBUTION.txt`
-
-本项目不含 NVIDIA、AMD、Intel 的任何文件，与上述厂商无关联。
+本项目与 NVIDIA、AMD、Intel 无关联。
 
 ## 免责声明
 
