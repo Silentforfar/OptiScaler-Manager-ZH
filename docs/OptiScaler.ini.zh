@@ -1,0 +1,1592 @@
+﻿; -------------------------------------------------------
+[Upscalers]
+; -------------------------------------------------------
+; 选择 DX11 游戏使用的超分器
+; fsr22（原生 DX11）、fsr31（原生 DX11）、xess（原生 DX11，仅 Arc 显卡）、xess_12（dx11on12）、fsr21_12（dx11on12）、fsr22_12（dx11on12）、ffx_12（FSR 2.3; 3.1; 4.x）、dlss（原生 DX11）、dlss_12（dx11on12，唯一同时能运行 DLSS 神经渲染的选项）- 默认（auto）为 fsr22
+Dx11Upscaler=auto
+
+; 选择 DX12 游戏使用的超分器
+; xess、fsr21、fsr22、ffx（FSR 2.3; 3.1; 4.x）、dlss
+; 默认（auto）为：显卡支持时用 DLSS，支持时用 FSR4，否则用 XeSS
+Dx12Upscaler=auto
+
+; 选择 Vulkan 游戏使用的超分器
+; fsr21（原生 VK）、fsr22（原生 VK）、ffx（原生 FSR 2.3; 3.1）、xess（原生 VK）、fsr21_12（VKon12）、ffx_12（FSR 2.3; 3.1; 4.x）、dlss - 默认（auto）为 fsr22
+VulkanUpscaler=auto
+
+
+; -------------------------------------------------------
+[FrameGen]
+; -------------------------------------------------------
+; 启用帧生成
+; true 或 false - 默认（auto）为 false
+Enabled=auto
+
+; 用于在游戏中切换该通道的虚拟键码。默认不绑定；建议在叠加菜单的
+; 按键绑定（Keybinds）区里设置，而不是手动填写。
+; 默认（auto）为未绑定
+
+; 选定的帧生成输入源
+; dlssg    - 可用于任意帧生成输出。开箱支持无 HUD 帧。仅限使用 Streamline 和 DLSSG 的游戏
+; nvngxfg  - 仅限 FSR 3 帧生成（配合 DLSS Enabler 的 dll 可实现 MFG）。需要游戏自带 DLSSG。开箱支持无 HUD 帧。使用 Streamline 交换链做节奏控制。
+; fsrfg    - 可用于任意帧生成输出。开箱支持无 HUD 帧。
+; upscaler - 必须启用超分器。可用于任意帧生成输出，但某些游戏可能效果不理想。为防止 UI 闪烁，需要开启 Hudfix
+; fsrfg30  - 可用于任意帧生成输出。开箱支持无 HUD 帧。
+; nofg、dlssg、nvngxfg、fsrfg、upscaler、fsrfg30 - 默认（auto）为 nofg
+FGInput=auto
+
+; 选定的帧生成输出
+; fsrfg          - 需要 amd_fidelityfx_dx12.dll，或 amd_fidelityfx_loader_dx12.dll + amd_fidelityfx_framegeneration_dx12.dll
+; xefg           - 需要 libxess_fg.dll 和 libxell.dll
+; dlssg          - 需要 'OptiScaler/streamline' 文件夹内的 streamline dll + nvngx_dlssg.dll
+; nofg、fsrfg、xefg、dlssg - 默认（auto）为 nofg
+FGOutput=auto
+
+; 选定的 Nvngx 帧生成替换方案
+; Nvngx FG 是更底层的 DLSSG 提供者。需要 FGInput=NvngxFG 或 FGOutput=DLSSG 本项才会生效
+; 例如：在只有超分的游戏里使用 Nukems：FGInput=upscaler, FGOutput=dlssg, FGNvngxReplacement=Nukems
+; 例如：在已支持 DLSSG 的游戏里使用 Arturs：FGInput=nvngxfg, FGOutput=auto, FGNvngxReplacement=Arturs
+; None      - 不替换
+; Nukems    - 需要 dlssg_to_fsr3_amd_is_better.dll，FSR 3 帧生成
+; Arturs    - 需要 dlss-enabler-headless.dll，FSR 3 MFG
+; FFX       - 需要 amd_fidelityfx_dx12.dll，或 amd_fidelityfx_loader_dx12.dll + amd_fidelityfx_framegeneration_dx12.dll，FSRFG 3 或 4
+; Combo     - 需要与 FFX 和 Arturs 相同的文件，中间帧用 FFX、其余用 Enabler。可把 FSR 4 帧生成与 Enabler 组合到 4x 和 6x 模式
+; None、Nukems、Arturs、FFX、Combo - 默认（auto）为 None
+FGNvngxReplacement=auto
+
+; 帧时间来源，会影响帧节奏
+; 0：输入（DLSSG/FSRFG/OptiFG）| 1：Present 调用之间的时间 | 2：零（仅用于 XeFG）
+; true 或 false - 默认（auto）为 0
+FTInput=auto
+
+; 启用帧生成调试视图
+; true 或 false - 默认（auto）为 false
+DebugView=auto
+
+; 在帧生成结果之上绘制 UI，需要无 HUD 帧和一张 UI 纹理，主要用于 FSR 帧生成
+; true 或 false - 默认（auto）为 false
+DrawUIOverFG=auto
+
+; 设置所提供 UI 纹理的类型，配合 DrawUIOverFG + FSR FG 会改变 UI 的显示效果
+; true 或 false - 默认（auto）为 true
+UIPremultipliedAlpha=auto
+
+; 控制无 HUD 帧，即使帧生成源已经提供了也会接管
+; true 或 false - 默认（auto）为 false
+DisableHudless=auto
+
+; 控制 UI 纹理，即使帧生成源已经提供了也会接管
+; true 或 false - 默认（auto）为 true
+DisableUI=auto
+
+; 忽略来自帧生成输入源的重置（Reset）信号
+; true 或 false - 默认（auto）为 false
+SkipReset=auto
+
+; 定义帧生成矩形区域
+; 整数值 - 默认（auto）为整个屏幕
+RectLeft=auto
+RectTop=auto
+RectWidth=auto
+RectHeight=auto
+
+; 帧生成允许领先游戏的最大帧数
+; 可能防止帧生成反复开关，但也可能引发问题
+; 1 到 3 - 默认（auto）为 1
+AllowedFrameAhead=auto
+
+; 始终把深度标记为 ValidNow
+; 会占用更多显存，但 Uniscaler 需要
+; true 或 false - 默认（auto）为 false
+DepthValidNow=auto
+
+; 始终把速度（运动矢量）标记为 ValidNow
+; 会占用更多显存，但 Uniscaler 需要
+; true 或 false - 默认（auto）为 false
+VelocityValidNow=auto
+
+; 始终把无 HUD 帧标记为 ValidNow
+; 会占用更多显存，但 Uniscaler 需要
+; true 或 false - 默认（auto）为 false
+HudlessValidNow=auto
+
+; 如果源标记了多个无 HUD 帧，只使用第一个
+; true 或 false - 默认（auto）为 false
+OnlyAcceptFirstHudless=auto
+
+; 保留并阻止释放帧生成交换链
+; 可防止释放交换链时崩溃
+; true 或 false - 默认（auto）为 true
+PreserveSwapChain=auto
+
+; 跳过对交换链的 ResizeBuffers 调用
+; 前提是旧的和新的描述完全一致
+; 可防止 ResizeBuffers 调用后崩溃
+; true 或 false - 默认（auto）为 true
+SkipResizeBuffers=auto
+
+; 正常情况下 ResizeBuffers 调用后交换链缓冲区
+; 应处于 COMMON 状态；启用此选项后
+; OptiScaler 会在跳过 ResizeBuffers 调用时
+; 尝试设置交换链缓冲区状态
+; 可能导致崩溃，也可能修复崩溃
+; true 或 false - 默认（auto）为 false
+ModifyBufferState=auto
+
+; 正常情况下 ResizeBuffers 调用后交换链当前索引
+; 应为 0；启用此选项后
+; OptiScaler 会通过反复调用 Present 来设置
+; 交换链索引，直到索引变为 0
+; 可能导致崩溃，也可能修复崩溃
+; true 或 false - 默认（auto）为 false
+ModifySCIndex=auto
+
+; 裁掉 UI 的透明部分，以帮助插帧
+; 仅对 FSR FG 输出和 NvngxFG 生效
+; 0.0 - 1.0 - 默认（auto）为 0.0，除非已知能修复某款游戏
+HudCutoff=auto
+
+
+; -------------------------------------------------------
+[FSRFG]
+; -------------------------------------------------------
+; 启用 FSR3.1 帧生成的撕裂线显示
+; true 或 false - 默认（auto）为 false
+DebugTearLines=auto
+
+; 启用 FSR3.1 帧生成的中断行显示
+; true 或 false - 默认（auto）为 false
+DebugResetLines=auto
+
+; 启用 FSR3.1 帧生成的节奏线显示
+; true 或 false - 默认（auto）为 false
+DebugPacingLines=auto
+
+; 启用异步 FSR3.1 帧生成
+; true 或 false - 默认（auto）为 false
+AllowAsync=auto
+
+; 为帧生成的交换链 Present 调用使用互斥锁
+; 关闭可能提升性能，代价是稳定性
+; true 或 false - 默认（auto）为 true
+UseMutexForSwapchain=auto
+
+; 帧节奏微调
+; -------------------------------------------------------
+; 启用自定义帧节奏微调参数
+; true 或 false - 默认（auto）为 true
+FramePacingTuning=auto
+
+; 此信息来自：
+; https://github.com/GPUOpen-LibrariesAndSDKs/FidelityFX-SDK/blob/54fbaafdc34716811751bea5032700e78f5a0f33/ffx-api/include/ffx_api/ffx_api_types.h#L197
+;
+; 默认调校
+; safetyMarginInMs==0.1ms 且 varianceFactor==0.1。
+;
+; 调校方案 A
+; safetyMarginInMs==0.75ms，且 varianceFactor==0.1。
+;
+; 调校方案 B
+; safetyMarginInMs==0.01ms 且 varianceFactor==0.3。
+;
+; 如果游戏在使用帧生成时，场景从复杂逐渐过渡到简单之后，帧率却异常地低，
+; 可以试试设为"调校方案 B"，以略高的波动为代价找回丢失的帧率。
+;
+; OptiScaler 默认使用方案 B
+
+; 帧节奏微调
+; 设置安全余量
+; 浮点数 - 默认（auto）为 0.01
+FPTSafetyMarginInMs=auto
+
+; 帧节奏微调
+; 设置波动系数
+; 0.0 - 1.0 - 默认（auto）为 0.3
+FPTVarianceFactor=auto
+
+; 帧节奏微调
+; 允许节奏自旋锁休眠，应能降低 CPU 占用
+; 可能导致帧率爬升变慢
+; true 或 false - 默认（auto）为 false
+FPTHybridSpin=auto
+
+; 帧节奏微调
+; 当 FPTHybridSpin 为 true 时自旋多久。以计时器分辨率单位衡量。
+; 不建议低于 2，否则会频繁超出目标
+; 无符号整数 - 默认（auto）为 2
+FPTHybridSpinTime=auto
+
+; 帧节奏微调
+; 改用 WaitForSingleObject 等待围栏值，而不是自旋
+; true 或 false - 默认（auto）为 false
+FPTWaitForSingleObjectOnFence=auto
+
+; 启用 FSR-FG Redstone 水印
+; true 或 false - 默认（auto）为 false
+EnableWatermark=auto
+
+
+; -------------------------------------------------------
+[XeFG]
+; -------------------------------------------------------
+; 跳过 XeFG 的初始化前检查
+; 可能导致画质变差或崩溃！
+; true 或 false - 默认（auto）为 false
+IgnoreInitChecks=auto
+
+; 设置插帧数量（MFG）
+; 1 = 2X | 2 = 3X | 3 = 4X
+; true 或 false - 默认（auto）为 1
+InterpolationCount=auto
+
+; XeFG 深度反转标志
+; true 或 false - 默认（auto）为 true
+DepthInverted=auto
+
+; 禁用 UI 插帧
+; 仅在提供无 HUD 帧时有效
+; true 或 false - 默认（auto）为 false
+UIComposition=auto
+
+; XeFG 抖动运动矢量标志
+; true 或 false - 默认（auto）为 false
+JitteredMV=auto
+
+; XeFG 高分辨率运动矢量标志
+; true 或 false - 默认（auto）为 false
+HighResMV=auto
+
+; 启用 XeFG 调试方块
+; true 或 false - 默认（auto）为 false
+DebugView=auto
+
+; 强制使用无边框模式而不是独占全屏
+; 切换模式时可能有稳定性问题，
+; 或独占全屏分辨率低于显示分辨率时
+; 出现画质问题
+; true 或 false - 默认（auto）为 false
+ForceBorderless=auto
+
+
+; -------------------------------------------------------
+[DLSSG]
+; -------------------------------------------------------
+; 设置插帧数量（MFG）
+; 1 = 2X | 2 = 3X | 3 = 4X | 4 = 5X | 5 = 6X
+; true 或 false - 默认（auto）为 1
+InterpolationCount=auto
+
+; 默认（auto）为 true
+UseGamesReflexMarkers=auto
+
+; 用于覆盖游戏发给 Streamline 的值，可以是 Nvngx FG，也可以在使用真 DLSSG 时设为 noFG
+; 默认（auto）为不覆盖
+OverrideInterpolationCount=auto
+
+; 尝试在游戏原生 DLSSG 中强制动态 MFG。需要 Nvidia Blackwell 或任意 AMD/Intel 显卡（Nvngx FG）
+; 需要 Streamline 2.11
+; 默认（auto）为 false
+OverrideForceDMFG=auto
+
+; 在 Opti 自己的 DLSSG 输出中强制动态 MFG。需要 Nvidia Blackwell 或任意 AMD/Intel 显卡（Nvngx FG）
+; 需要 Streamline 2.11
+; 默认（auto）为 false
+ForceDMFG=auto
+
+
+; 设置动态多帧生成的帧率目标
+; 非零时无法手动调整帧生成倍率
+; 需要启用 DMFG
+; 默认（auto）为 0.0（显示器刷新率）
+FramerateTargetDMFG=auto
+
+
+; -------------------------------------------------------
+[OptiFG]
+; -------------------------------------------------------
+
+; 禁用 HUDFix 资源追踪
+; 同时降低与处理 HUD 元素的
+; ML 帧生成器配合时的 CPU 开销
+; true 或 false - 默认（auto）为 false
+DisableHUDFix=auto
+
+; 为帧生成启用 HUDFix 无 HUD 帧追踪
+; 可能崩溃，尤其是开启异步时
+; true 或 false - 默认（auto）为 false
+HUDFix=auto
+
+; 延迟无 HUD 图像捕获
+; 可能崩溃，尤其是设得太高时！
+; 大于 0 的整数 - 默认（auto）为 1
+HUDLimit=auto
+
+; 对更多图像格式做扩展无 HUD 检查
+; 可能崩溃并变慢。
+; true 或 false - 默认（auto）为 false
+HUDFixExtended=auto
+
+; 不使用 CreateRenderTargetView 做资源追踪
+; true 或 false - 默认（auto）为 false
+HudfixDisableRTV=auto
+
+; 不使用 CreateShaderResourceView 做资源追踪
+; true 或 false - 默认（auto）为 false
+HudfixDisableSRV=auto
+
+; 不使用 CreateUnorderedAccessView 做资源追踪
+; true 或 false - 默认（auto）为 false
+HudfixDisableUAV=auto
+
+; 不使用 OMSetRenderTargets 做资源追踪
+; true 或 false - 默认（auto）为 false
+HudfixDisableOM=auto
+
+; 不使用 SetComputeRootDescriptorTable 做资源追踪
+; true 或 false - 默认（auto）为 true
+HudfixDisableSCR=auto
+
+; 不使用 SetGraphicsRootDescriptorTable 做资源追踪
+; true 或 false - 默认（auto）为 true
+HudfixDisableSGR=auto
+
+; 不使用 DrawInstanced 做资源追踪
+; true 或 false - 默认（auto）为 false
+HudfixDisableDI=auto
+
+; 不使用 DrawIndexedInstanced 做资源追踪
+; true 或 false - 默认（auto）为 false
+HudfixDisableDII=auto
+
+; 不使用 Dispatch 做资源追踪
+; true 或 false - 默认（auto）为 false
+HudfixDisableDispatch=auto
+
+; 阻止把交换链缓冲区用做无 HUD 帧
+; 可能有助于修复叠加层问题，但也可能降低兼容性
+; true 或 false - 默认（auto）为 false
+HUDFixDontUseSwapchainBuffers=auto
+
+; 把无 HUD 帧的分辨率检查放宽 32 像素
+; 有助于某些分辨率或屏幕比例下带黑边的游戏（例如巫师 3）
+; true 或 false - 默认（auto）为 false
+HUDFixRelaxedResolutionCheck=auto
+
+; 在着色器执行前捕获资源。
+; 提高无 HUD 帧的捕获概率，但可能捕获到不必要的资源。
+; true 或 false - 默认（auto）为 false
+HUDFixImmediate=auto
+
+; 无论 Hudfix 设置如何都始终启用资源追踪
+; 可能影响性能，但关掉可能影响稳定性
+; true 或 false - 默认（auto）为 false
+AlwaysTrackHeaps=auto
+
+; 用分片锁代替单个互斥锁来做资源追踪
+; 可能提升重度多线程游戏的性能
+; true 或 false - 默认（auto）为 false
+UseShards=auto
+
+; 阻止极少使用的资源被当作无 HUD 帧
+; 以避免闪烁和其他问题
+; true 或 false - 默认（auto）为 false
+ResourceBlocking=auto
+
+; 复制一份深度图供 Hudfix 帧生成调用使用
+; 设为 false 很可能会偶发画面错乱
+; true 或 false - 默认（auto）为 true
+MakeDepthCopy=auto
+
+; 按 DepthScaleMax 的值缩放深度缓冲区
+; 修复 DLSS-D + UE 下深度信息异常
+; true 或 false - 默认（auto）为 false
+EnableDepthScale=auto
+
+; EnableDepthScale 的缩放值
+; 深度值会除以该值
+; 浮点数 - 默认（auto）为 10000.0
+DepthScaleMax=auto
+
+; 复制一份运动矢量供 Hudfix 帧生成调用使用
+; 设为 false 很可能会偶发画面错乱
+; true 或 false - 默认（auto）为 true
+MakeMVCopy=auto
+
+; 翻转深度与速度纹理
+; 可修复 Unity 游戏里 OptiFG 的问题
+; true 或 false - 默认（auto）为 false
+ResourceFlip=auto
+
+; 按插帧区域翻转深度与速度纹理
+; 可修复 Unity 游戏里 OptiFG 的问题
+; true 或 false - 默认（auto）为 false
+ResourceFlipOffset=auto
+
+; 始终捕获 FSR-FG 3.1 交换链并用选定输出替换
+; 可修复游戏创建但不使用 FSR-FG 交换链
+; 导致的双重 Present 调用问题（寂静岭 f）
+; true 或 false - 默认（auto）为 false
+AlwaysCaptureFSRFGSwapchain=auto
+
+
+; -------------------------------------------------------
+[Inputs]
+; -------------------------------------------------------
+; OptiScaler 会挂钩 (nvngx.dll) 并使用 DLSS 输入
+; true 或 false - 默认（auto）为 true
+EnableDlssInputs=auto
+
+; OptiScaler 会挂钩 (libxess.dll) 并使用 XeSS 输入
+; true 或 false - 默认（auto）为 true
+EnableXeSSInputs=auto
+
+; OptiScaler 会挂钩 Fsr2 输入
+; true 或 false - 默认（auto）为 true
+EnableFsr2Inputs=auto
+
+; OptiScaler 会挂钩 Fsr2 的 Dx11 输入，而不是 Dx12 的
+; true 或 false - 默认（auto）为 false
+UseFsr2Dx11Inputs=auto
+
+; OptiScaler 会挂钩 Fsr2 的 Vulkan 输入，而不是 Dx11 和 Dx12 的
+; true 或 false - 默认（auto）为 false
+UseFsr2VulkanInputs=auto
+
+; OptiScaler 会使用 Fsr2 输入
+; true 或 false - 默认（auto）为 true
+UseFsr2Inputs=auto
+
+; 尝试用特征码匹配定位 FSR2 方法
+; 会拖慢游戏加载
+; true 或 false - 默认（auto）为 false
+Fsr2Pattern=auto
+
+; OptiScaler 会挂钩 Fsr3 输入
+; true 或 false - 默认（auto）为 true
+EnableFsr3Inputs=auto
+
+; OptiScaler 会使用 Fsr3 输入
+; true 或 false - 默认（auto）为 true
+UseFsr3Inputs=auto
+
+; 尝试用特征码匹配定位 FSR3 方法
+; 会拖慢游戏加载
+; true 或 false - 默认（auto）为 false
+Fsr3Pattern=auto
+
+; OptiScaler 会挂钩 FidelityFX（amd_fidelityfx_dx12.dll）API 输入
+; true 或 false - 默认（auto）为 true
+EnableFfxInputs=auto
+
+; OptiScaler 会使用 FidelityFX API 输入
+; true 或 false - 默认（auto）为 true
+UseFfxInputs=auto
+
+; 启用游戏自带 FSR3.1 超分器与 OptiScaler 所选超分器之间的热切换
+; true 或 false - 默认（auto）为 false
+EnableHotSwapping=auto
+
+
+; -------------------------------------------------------
+[FSRFGInputs]
+; -------------------------------------------------------
+; 不使用在 ffxConfig 中设置的无 HUD 帧
+; true 或 false - 默认（auto）为 false
+SkipConfigForHudless=auto
+
+; 不使用在 ffxDispatch 中设置的无 HUD 帧
+; true 或 false - 默认（auto）为 false
+SkipDispatchForHudless=auto
+
+
+; -------------------------------------------------------
+[Framerate]
+; -------------------------------------------------------
+; 尽可能借助 Reflex 实现的帧率限制
+; 也包括替代 Reflex 的技术，如 XeLL 或 AntiLag 2
+; 浮点数 - 默认（auto）为 0.0（禁用）
+FramerateLimit=auto
+
+
+; -------------------------------------------------------
+[XeSS]
+; -------------------------------------------------------
+; 在初始化前预构建 XeSS 管线
+; true 或 false - 默认（auto）为 true
+BuildPipelines=auto
+
+; 在初始化前预创建 XeSS 堆对象
+; true 或 false - 默认（auto）为 true
+CreateHeaps=auto
+
+; 选择 XeSS 网络模型
+; 目前似乎没有实际作用
+; 0 = KPSS | 1 = Splat | 2 = 模型 3 | 3 = 模型 4 | 4 = 模型 5 | 5 = 模型 6
+; 默认（auto）为 0
+NetworkModel=auto
+
+
+; -------------------------------------------------------
+[FSR]
+; -------------------------------------------------------
+; 为 FSR 和 FSR 帧生成设置相机垂直 FOV
+; 0.0 到 180.0 - 默认（auto）为 60.0
+VerticalFov=auto
+
+; 未定义垂直 FOV 时，用本项反推垂直 FOV
+; 0.0 到 180.0 - 默认（auto）为关闭
+HorizontalFov=auto
+
+; 为 FSR 和 FSR 帧生成设置相机近裁剪面
+; 0.0 到浮点最大值 - 默认（auto）为 0.1
+CameraNear=auto
+
+; 为 FSR 和 FSR 帧生成设置相机远裁剪面
+; 0.0 到浮点最大值 - 默认（auto）为 10000.0
+CameraFar=auto
+
+; 启用相机参数（近、远、FOV）
+; 取自 FSR2/3 或 FFX 输入
+; true 或 false - 默认（auto）为 true
+UseFsrInputValues=auto
+
+; 为 FSR3.X 超分器启用调试视图
+; true 或 false - 默认（auto）为 false
+DebugView=auto
+
+; 选择 FSR3.X/4 的超分后端
+; 0 = FSR 4.0.2 | 1 = FSR 3.1.5 | 2 = FSR 2.3.4
+; 取决于显卡 - 默认（auto）为 0：RDNA4 用 FSR4，其余用 FSR3
+UpscalerIndex=auto
+
+; 选择 FFX 的帧生成后端
+; 0 = FSR 4.0.0 | 1 = FSR 3.1.6
+; 取决于显卡 - 默认（auto）为 0：RDNA4 用 FSR4，其余用 FSR3
+FGIndex=auto
+
+; 为 FSR3.1.1 及以上版本设置速度系数
+; 值为 0.0f 可改善高亮像素的时间稳定性。
+; 0.0 到 1.0 - 默认（auto）为 1.0
+VelocityFactor=auto
+
+; 为 FSR3.1.4 及以上版本设置响应缩放
+; 用于开发测试：向反应遮罩写入更大的值是否能减少拖影
+; 0.0 到无穷 - 默认（auto）为 1.0
+ReactiveScale=auto
+
+; 为 FSR3.1.4 及以上版本设置着色缩放
+; 增大该项会放大读取时 fsr3.1 计算出的着色变化值，获得更高响应性。
+; 0.0 到无穷 - 默认（auto）为 1.0
+ShadingScale=auto
+
+; 为 FSR3.1.4 及以上版本设置每帧累加量
+; 对应在发生去遮挡的像素位置、或反应遮罩值 > 0.0f 时每帧新增的累加量。
+; 降低此项，同时把拖影物体（即无运动矢量）以接近 1.0f 的值写入反应遮罩，可减少时间拖影。
+; 但降低此项也可能让更多细小特征像素闪烁。
+; 0.0 到 1.0 - 默认（auto）为 0.333
+AccAddPerFrame=auto
+
+; 为 FSR3.1.4 及以上版本设置最小去遮挡累加量
+; 增大该项可减少来回摆动、相互频繁去遮挡的细物体周围的白色像素时间闪烁。
+; 值过高可能加重拖影。取足够小的负值意味着：对第 N 帧发生去遮挡的像素，
+; 从第 N+2 帧开始加 fAccumulationAddedPerFrame。
+; -1.0 到 1.0 - 默认（auto）为 -0.333
+MinDisOccAcc=auto
+
+; 把原始 DLSS 反应遮罩用做透明遮罩
+; true 或 false - 默认（auto）为 true
+UseReactiveMaskForTransparency=auto
+
+; 配合 FSR 使用时对 DLSS 反应遮罩施加的偏置
+; 值越高，新帧的权重越大
+; 0.0 - 0.9 - 默认（auto）为 0.45
+DlssReactiveMaskBias=auto
+
+; 强制 Opti 尝试使用指定的 FSR 4 模型
+; 别在真正不支持的显卡上强行去开 FP8，驱动会回退到 FSR 3
+; 0 = 不覆盖 | 1 = FP8 | 2 = INT8
+; 0 到 2 - 默认（auto）为 0
+Fsr4ForceModel=auto
+
+; 选择要使用的内部 FSR4 预设
+; 0 = 对应 FSR Native AA，1 = 超高质量/质量，2 = 均衡，3 = 性能，4 = DRS，5 = 超级性能
+; 0 到 5 - 默认（auto）为游戏自身的默认值
+Fsr4Preset=auto
+
+; 启用 FSR4 水印
+; true 或 false - 默认（auto）为 false
+Fsr4EnableWatermark=auto
+
+; 阻止 OptiScaler 加载 amdxc64.dll
+; true 或 false - 默认（auto）为 false
+Fsr4DoNotLoadAmdxc64=auto
+
+; 表示输入颜色资源使用非线性色彩空间
+; 可能改善 FSR4 画质
+; true 或 false - 默认（auto）为 false
+FsrNonLinearColorSpace=auto
+
+; 表示输入颜色资源包含感知 sRGB 颜色
+; 可能改善 FSR4 画质
+; true 或 false - 默认（auto）为 false
+FsrNonLinearSRGB=auto
+
+; 表示输入颜色资源包含感知 PQ 颜色
+; 可能改善 FSR4 画质
+; true 或 false - 默认（auto）为 false
+FsrNonLinearPQ=auto
+
+; 更新 DirectX 12 Agility SDK
+; 使赛博朋克 2077 等老游戏能在 Windows 10 上使用 FSR4
+; 你"必须"把 D3D12_OptiScaler 文件夹复制到 OptiScaler 文件夹里！
+; true 或 false - 默认（auto）为 false
+FsrAgilitySDKUpgrade=auto
+
+
+; -------------------------------------------------------
+[DLSS]
+; -------------------------------------------------------
+; 启用对原始 NVNGX 的调用
+; true 或 false - 默认（auto）为 true
+Enabled=auto
+
+; 设为 true 以启用自定义渲染预设覆盖
+; true 或 false - 默认（auto）为 false
+RenderPresetOverride=auto
+
+; 各画质档位对应的渲染预设
+; 取决于 DLSS 版本，最新版本的顺序为
+; 0 = 默认 | 1 = A | 2 = B | 3 = C | 4 = D | 5 = E | 6 = F | 7 = G
+; 8 = H | 9 = I | 10 = J | 11 = K | 12 = L | 13 = M | 14 = N | 15 = O
+; 默认（auto）为 0
+RenderPresetForAll=auto
+RenderPresetDLAA=auto
+RenderPresetUltraQuality=auto
+RenderPresetQuality=auto
+RenderPresetBalanced=auto
+RenderPresetPerformance=auto
+RenderPresetUltraPerformance=auto
+
+; 配合 NGX 使用通用 appid，修复某些游戏里 OptiScaler 预设覆盖不生效的问题
+; true 或 false - 默认（auto）为 false
+UseGenericAppIdWithDlss=auto
+
+
+; -------------------------------------------------------
+[DLSSD]
+; -------------------------------------------------------
+; 设为 true 以启用自定义渲染预设覆盖
+; true 或 false - 默认（auto）为 false
+RenderPresetOverride=auto
+
+; 各画质档位对应的渲染预设
+; 取决于 DLSSD 版本，最新版本的顺序为
+; 0 = 默认 | 1 = A | 2 = B | 3 = C | 4 = D | 5 = E
+; 默认（auto）为 0
+RenderPresetForAll=auto
+RenderPresetDLAA=auto
+RenderPresetUltraQuality=auto
+RenderPresetQuality=auto
+RenderPresetBalanced=auto
+RenderPresetPerformance=auto
+RenderPresetUltraPerformance=auto
+
+
+; -------------------------------------------------------
+[NvngxFG]
+; -------------------------------------------------------
+; 修复 AMD 显卡在 Windows 下部分游戏（多为非 UE）画面异常
+; 可能引起卡顿，最好只在必要时、且已确认有效时使用
+; true 或 false - 默认（auto）为 false
+MakeDepthCopy=auto
+
+; 接受任意标志组合，例如 0x14100000
+; 参考 https://github.com/artur-graniszewski/dlss-enabler-main/blob/a92464d468eb0d91ae17befa66c6bf6229f20b9f/Utils/DlssgProxy.cpp#L1033
+; 任意标志组合 - 默认（auto）为 0x10000000（IGNORE_UI_TEXTURE）
+DispatchFlags = auto
+
+; 控制写入 DLSSG.ShowDebug 的值
+; 看起来只会显示插出来的帧
+; true 或 false - 默认（auto）为 false
+ShowDebug = auto
+
+; 禁止把无 HUD 帧资源发给 DLSSG
+; 某些 DispatchFlags 组合下可能需要，参见上面的参考链接
+; true 或 false - 默认（auto）为 false
+DisableHudless = auto
+
+
+; -------------------------------------------------------
+[Libraries]
+; -------------------------------------------------------
+; OptiScaler 查找下列 dll 文件的主文件夹
+; 默认为 .\OptiScaler
+OptiDllPath=auto
+
+; 以下选项可为每个 dll 单独覆盖路径
+; -----------------------------------------
+
+; nvngx.dll 或 _nvngx.dll
+NvngxPath=auto
+
+; nvngx_dlss.dll
+NvngxDlssPath=auto
+
+; nvapi64.dll 或 fakenvapi.dll
+NvapiPath=auto
+
+; amd_fidelityfx_dx12.dll 或 amd_fidelityfx_loader_dx12.dll
+FfxDx12Path=auto
+
+; amd_fidelityfx_upscaler_dx12.dll
+FfxDx12SRPath=auto
+
+; amd_fidelityfx_framegeneration_dx12.dll
+FfxDx12FGPath=auto
+
+; amd_fidelityfx_denoiser_dx12.dll
+FfxDx12RRPath=auto
+
+; amd_fidelityfx_radiancecache_dx12.dll
+FfxDx12RCPath=auto
+
+; amd_fidelityfx_vk.dll
+FfxVkPath=auto
+
+; libxess.dll
+XeSSPath=auto
+
+; libxess_fg.dll
+XeFGPath=auto
+
+; libxell.dll
+XeLLPath=auto
+
+; libxess_dx11.dll
+XeSSDx11Path=auto
+
+; 此项路径会在初始化时加入 Nvngx 的搜索路径
+NvngxFeaturePath=auto
+
+
+; -------------------------------------------------------
+[Menu]
+; -------------------------------------------------------
+; 启用新版叠加层 ImGui 菜单
+; 不开启此选项，OptiScaler 会禁用所有帧生成功能
+; true 或 false - 默认（auto）：当 OptiScaler 以 nvngx.dll 形式运行时为 false，否则为 true
+OverlayMenu=auto
+
+; 游戏内 ImGui 菜单缩放
+; 0.5 到 2.0 - 默认（auto）为 1.0，低于 900p 时会自动变小
+Scale=auto
+
+; 打开菜单的快捷键
+; 所有键码可在此处查询
+; 用 Description 一列对应到 key 的 Value
+; https://learn.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes
+; 整数值 - 默认（auto）为 0x2D，即 VK_INSERT/Insert 键；此前的默认键是 0x24 -> VK_HOME/Home 键
+; 比如想用 VK_BACK/退格键（值为 0x08），就写 ShortcutKey=0x08
+; -1 -> 不设快捷键
+ShortcutKey=auto
+
+; 把缩放比例上限放宽到 0.1 - 6.0
+; true 或 false - 默认（auto）为 false
+ExtendedLimits=auto
+
+; 菜单使用高质量字体
+; 可能多占显存
+; 如果遇到黑色叠加层，或 Vulkan 下菜单相关崩溃，可以试着关掉
+; true 或 false - 默认（auto）为 true
+; 【汉化必需】必须为 true，否则不会加载下面的自定义字体，菜单中文会显示不出来
+UseHQFont=true
+
+; 只调整字号大小，不影响其他样式元素
+; 主要在用 TTFFontPath 加载自定义字体时有用
+; 浮点数 - 默认（auto）为 14.0
+FontSize=auto
+
+; 用做高质量字体的字体文件路径，需要 UseHQFont=true
+; 最好用等宽字体
+; 路径示例：C:\\Windows\\Fonts\\comic.ttf
+; 默认（auto）为 OptiScaler 自带的 Hack-Regular
+; 【汉化必需】内置的 Hack-Regular 不含汉字，必须指向一个中文字体
+; 黑体 simhei.ttf 是单文件 TTF，兼容性最好；也可以用 msyh.ttc（微软雅黑）
+TTFFontPath=C:\Windows\Fonts\simhei.ttf
+
+; 关闭启动时的闪屏提示
+; true 或 false - 默认（auto）为 false
+DisableSplash=auto
+
+; 启用帧率叠加显示
+; true 或 false - 默认（auto）为 false
+ShowFps=auto
+
+; 游戏内帧率叠加显示的缩放
+; 0.5 到 2.0 - 默认（auto）为与菜单相同的缩放
+FpsScale=auto
+
+; 帧率叠加显示的位置
+; 0 = 左上 | 1 = 右上 | 2 = 左下 | 3 右下
+; 0 到 3 - 默认（auto）为 0
+FpsOverlayPos=auto
+
+; 帧率叠加显示的类型
+; 0 = 仅帧率 | 1 = 简单 | 2 = 详细 | 3 = 详细 + 曲线 | 4 完整 | 5 完整 + 曲线 | 6 Reflex 延迟分解
+; 0 到 6 - 默认（auto）为 0
+FpsOverlayType=auto
+
+; 帧率叠加显示的快捷键
+; https://learn.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes
+; 整数值 - 默认（auto）为 0x21，即 VK_PRIOR/Page up 键
+; -1 -> 不设快捷键
+FpsShortcutKey=auto
+
+; 循环切换帧率叠加类型的快捷键
+; https://learn.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes
+; 整数值 - 默认（auto）为 0x22，即 VK_NEXT/Page down 键
+; -1 -> 不设快捷键
+FpsCycleShortcutKey=auto
+
+; 启用横向的帧率叠加布局
+; true 或 false - 默认（auto）为 false
+FpsOverlayHorizontal=auto
+
+; 帧率叠加显示背景的不透明度
+; 0.0 到 1.0 - 默认（auto）为 0.4
+FpsOverlayAlpha=auto
+
+; 开启/关闭帧生成的快捷键
+; https://learn.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes
+; 整数值 - 默认（auto）为 0x23，即 VK_END/End 键
+; -1 -> 不设快捷键
+FGShortcutKey=auto
+
+; 叠加层使用主题配色
+; true 或 false - 默认（auto）为 false
+OverlaysUseTheme=auto
+
+; 为菜单启用浅色主题
+; true 或 false - 默认（auto）为 false
+LightTheme=auto
+
+; 菜单的强调色
+; 强调色的 R/G/B 浮点值
+; 0.0 到 1.0 - 默认（auto）R: 0.0, G: 0.4, B: 0.77（蓝色）
+AccentColorR=auto
+AccentColorG=auto
+AccentColorB=auto
+
+; 菜单的背景色
+; 背景色的 R/G/B 浮点值
+; 0.0 到 1.0 - 默认（auto）R: 0.0, G: 0.0, B: 0.0（黑色）
+BGColorR=auto
+BGColorG=auto
+BGColorB=auto
+
+; 菜单背景的不透明度
+; 0 为全透明，1 为不透明
+; 0.0 到 1.0 - 默认（auto）0.99
+BGColorA=auto
+
+
+; -------------------------------------------------------
+[Spoofing]
+; -------------------------------------------------------
+; 要伪装的 VendorID
+; 0x10de = Nvidia | 0x8086 = Intel | 0x1002 = AMD
+; 整数值 - 默认（auto）为 0x10de
+SpoofedVendorId=auto
+
+; 要伪装的 DeviceID
+; 0x2684 = 4090 | 0xE20B = B580 | 0x7550 9070 XT
+; 整数值 - 默认（auto）为 0x2684（4090）
+SpoofedDeviceId=auto
+
+; 要伪装的目标 VendorID
+; 整数值 - 默认（auto）为全部
+TargetVendorId=auto
+
+; 要伪装的目标 DeviceID
+; 默认（auto）为全部
+TargetDeviceId=auto
+
+; 伪装的显卡名称
+; NVIDIA GeForce RTX 4090 | Intel(R) Arc(TM) B580 Graphics | AMD Radeon RX 9070 XT
+; 默认（auto）为 NVIDIA GeForce RTX 4090
+SpoofedGPUName=auto
+
+; 为 Streamline 启用显卡伪装，即使对游戏其余部分关闭了 Dxgi 伪装
+; 通常可以在不伪装整个游戏的情况下使用 Fakenvapi，有时也能让 DLSS/DLSSG 出现
+; true 或 false - 默认（auto）为 true
+StreamlineSpoofing=auto
+
+; 为 DXGI 启用 Nvidia 显卡伪装（可在上方改成伪装成其他厂商）
+; true 或 false - 默认（auto）对 AMD/Intel 为 true，对 Nvidia 为 false
+Dxgi=auto
+
+; 用包装 DxgiFactory 代替挂钩
+; 可能引发问题，也可能帮助 Nvidia 显卡与其他 mod 共存
+; true 或 false - 默认（auto）为 false
+DxgiFactoryWrapping=auto
+
+; 当调用方法在列表内时跳过 DXGI 显卡伪装（例：slInit|slGetPluginFunction|nvapi_QueryInterface）
+; 注意这会让后续调用都不再伪装，且在 Linux 上无效
+; 方法名用竖线 "|" 分隔 - 默认（auto）为禁用
+DxgiBlacklist=auto
+
+; 为 DXGI 伪装显存容量
+; 伪装的容量，单位 GB - 默认（auto）为禁用
+DxgiVRAM=auto
+
+; 为 Vulkan 启用 Nvidia 显卡伪装（可在上方改成伪装成其他厂商）
+; true 或 false - 默认（auto）为 false
+Vulkan=auto
+
+; 为 Vulkan 启用 Nvidia 扩展伪装
+; true 或 false - 默认（auto）为 false
+VulkanExtensionSpoofing=auto
+
+; 为 Vulkan 伪装显存容量
+; 伪装的容量，单位 GB - 默认（auto）为禁用
+VulkanVRAM=auto
+
+; 启用对硬件加速 GPU 计划（HAGS）的伪装
+; Nukem 的 mod 需要；也让 RTX40 系用户在不开启 HAGS 时使用 DLSSG
+; true 或 false - 默认（auto）为 false，除非启用了 DLSSG mod
+SpoofHAGS=auto
+
+; 启用对请求的 D3D 特性等级的覆盖
+; true 或 false - 默认（auto）为 false
+D3DFeatureLevel=auto
+
+; 启用伪装时，防止 UE 游戏在 Intel 显卡上报"不支持 DirectX12"的错误
+; true 或 false - 默认（auto）为 false
+UEIntelAtomics=auto
+
+; 在注册表层面伪装 Vendor ID、Device ID 和驱动版本
+; true 或 false - 默认（auto）为 false
+Registry=auto
+
+; 在注册表层伪装驱动版本
+; 字符串值 - 默认（auto）为 32.0.15.9155（Nvidia 用）
+RegistryDriver=auto
+
+; 在 User32 层伪装 Vendor ID、Device ID
+; true 或 false - 默认（auto）为 false
+User32=auto
+
+
+; -------------------------------------------------------
+[Plugins]
+; -------------------------------------------------------
+; 搜索同名插件（dxgi.dll、winmm.dll 等）的路径
+; 默认为 OptiDllPath 下的 plugins ".\OptiScaler\plugins\"
+Path=auto
+
+; 允许 OptiScaler 加载 plugins 文件夹里的 *.asi 文件
+; true 或 false - 默认（auto）为 false
+; 【已开启】本包里放了 40 系 MFG 解锁插件 OptiScaler\plugins\MFGUnlocker.asi，
+; 必须为 true 才会被加载。不需要该插件时，把那个 .asi 删掉即可，改回 auto 也行。
+LoadAsiPlugins=true
+
+; 延迟注入 plugins 文件夹里延迟加载的 *.asi 文件的时间
+; 要让某个 ASI 插件延迟加载，在扩展名前加 -loadlate，例如 "myplugin-loadlate.asi"
+; 整数，单位秒 - 默认（auto）为 30
+LateAsiPluginsDelay=auto
+
+; 从游戏 exe 所在文件夹加载 SpecialK64.dll
+; 请在 SpecialK64.dll 旁边创建一个空的 SpecialK.dxgi 文件
+; 用来设定 SpecialK 的工作模式，否则它不会被激活
+; 由于稳定性问题，启用 OptiFG、经 Streamline 的 DLSSG 或 FSR-FG 输入时不会加载
+; true 或 false - 默认（auto）为 false
+LoadSpecialK=auto
+
+; 从游戏 exe 所在文件夹加载 Reshade64.dll
+; 把 Reshade 的 dll 改名为 ReShade64.dll，与 OptiScaler 放在一起，然后设为 true
+; true 或 false - 默认（auto）为 false
+LoadReshade=auto
+
+; 为所有检测到的 RDNA 2 显卡加载自定义 amdxc64.dll
+; OptiScaler 会从 OptiDllPath 加载，例如 ".\OptiScaler\amdxc64.dll"
+; true 或 false - 默认（auto）为 false
+LoadCustomAmdxc64OnRdna2=auto
+
+; -------------------------------------------------------
+[fakenvapi]
+; -------------------------------------------------------
+; 缺少 nvapi64.dll 时使用 fakenvapi。
+; fakenvapi 替代 nvapi 调用，让 AntiLag 2 或 XeLL 之类可以替代 Reflex
+; 有时也需要它才能让 DLSS/DLSSG 出现
+; true 或 false - 默认（auto）为 true
+UseFakenvapi=auto
+
+; 允许非 Intel 显卡在没有帧生成的情况下使用 XeLL，需要新版 libxell + libxess_fg
+; 会禁用帧生成选项
+; true 或 false - 默认（auto）为 false
+ForceXeLL=auto
+
+; 即使有更好的选择也尝试使用 LatencyFlex
+; 使用 XeFG 时不生效
+; true 或 false - 默认（auto）为 false
+ForceLatencyFlex=auto
+
+; 控制 LatencyFlex 的工作方式
+; 0 = 保守
+; 1 = 激进，能降低延迟，但某些情况下帧率会比预期降得更多
+; 2 = 使用 reflex 帧 ID，部分游戏不兼容（例如赛博朋克），会退回激进模式
+; 默认（auto）为 0
+LatencyFlexMode=auto
+
+; 强制 Reflex 状态，适用于只在开启 DLSSG 时才启用 Reflex、且没有单独开关的游戏
+; 0 - 跟随游戏内设置，1 - 强制关闭，2 - 强制开启
+; 默认（auto）为 0
+ForceReflex=auto
+
+
+; -------------------------------------------------------
+[NvApi]
+; -------------------------------------------------------
+; 禁用 FlipMetering
+; 修复使用 NukemFG 时 Nvidia 的 Flip Metering 导致帧时间曲线过粗的问题，需要 Fakenvapi 生效
+; true 或 false - 默认（auto）对 Nvidia 为 false，对其他为 true
+DisableFlipMetering=auto
+
+
+; -------------------------------------------------------
+[Dx11withDx12]
+; -------------------------------------------------------
+; 创建 D11wDx12 功能时延迟部分操作，以提升兼容性
+; true 或 false - 默认（auto）为 false
+UseDelayedInit=auto
+
+; 优先使用更底层的 D3D11_RESOURCE_MISC_SHARED
+; 性能稍好，但兼容性可能略差
+; true 或 false - 默认（auto）为 true
+DontUseNTShared=auto
+
+
+; -------------------------------------------------------
+[Hooks]
+; -------------------------------------------------------
+; 提早挂钩内核方法
+; 可能引发兼容性问题！！！
+; true 或 false - 默认（auto）为 false
+EarlyHooking=auto
+
+; 跳过对本地 nvngx 文件的挂钩，只挂钩注册表中的 nvngx
+; Uniscaler + 帧生成需要
+; true 或 false - 默认（auto）为 false
+HookOriginalNvngxOnly=auto
+
+; 只挂钩 ntdll.dll 的方法，跳过 kernel32.dll 和 kernelbase.dll 的挂钩
+; true 或 false - 默认（auto）为 true
+UseNtdllHooks=auto
+
+
+; -------------------------------------------------------
+[Sharpness]
+; -------------------------------------------------------
+; 可选项为：
+; RCAS - AMD 的鲁棒对比度自适应锐化
+; DA - 为锐化启用基于深度的边缘检测。
+;      在物体边界处减弱锐化，防止光晕和伪影。
+;      物体越远，锐化越强（上限 1.0）
+;      推荐用于几何复杂或需要超分的场景。
+; LCDA - 上述 DA 的局部对比度版本
+; rcas、da 或 lcda - 默认（auto）为 rcas
+Shader=auto
+
+; 用固定的锐化值覆盖 DLSS 的锐化参数
+; true 或 false - 默认（auto）为 false
+OverrideSharpness=auto
+
+; 锐化强度，
+; 取值范围 0.0 到 1.0（用 RCAS 时上限为 1.3）- 默认（auto）为 0.3
+Sharpness=auto
+
+
+; -------------------------------------------------------
+[OutputScaling]
+; -------------------------------------------------------
+; 为 Dx12 和 Dx11（Dx12 后端）启用输出缩放
+; true 或 false - 默认（auto）为 false
+Enabled=auto
+
+; 输出缩放比例
+; 0.5 - 3.0 - 默认（auto）为 1.5
+Multiplier=auto
+
+; 输出缩放使用的降采样器
+; 0 = FSR1 | 1 = Bicubic | 2 = Catmull-Rom | 3 = Lanczos2 | 4 = Lanczos3 | 5 = Kaiser2 | 6 = Kaiser3 | 7 = MAGIC
+; 0 到 7 - 默认（auto）为 0（FSR1）
+Downscaler=auto
+
+
+; -------------------------------------------------------
+[CAS]
+; -------------------------------------------------------
+; 启用 RCAS 锐化
+; true 或 false - 默认（auto）为 false
+Enabled=auto
+
+; 启用运动锐化
+; true 或 false - 默认（auto）为 false
+MotionSharpnessEnabled=auto
+
+; 按运动幅度增减锐化
+; 取值范围 -1.3 到 1.3 - 默认（auto）为 0.4
+MotionSharpness=auto
+
+; 像素要移动多少才会应用运动锐化
+; 0.0 - 100.0 - 默认（auto）为 0.0
+MotionThreshold=auto
+
+; 像素要移动多少才达到最大运动锐化值
+; 介于 MotionThreshold 与本值之间的将按比例缩放锐化值
+; 0.0 - 100.0 - 默认（auto）为 10.0
+MotionScaleLimit=auto
+
+; 启用基于对比度的锐化
+; 在高对比度区域增强锐度。
+; true 或 false - 默认（auto）为 false
+ContrastEnabled=auto
+
+; 基于对比度的锐化值
+; 值越高，高对比度区域锐度越强。
+; 配合高锐化值时，高值可能导致画面异常闪烁！！！
+; 0.0 - 2.0  - 默认（auto）为 0.0
+Contrast=auto
+
+; 为运动/DA 锐化启用调试高亮
+; 偏红表示增强锐化，偏绿表示减弱锐化
+; 深度感知锐化中检测到的边缘会泛蓝
+; true 或 false - 默认（auto）为 false
+SharpenerDebug=auto
+
+; 控制跨越深度边缘时锐化被削弱的强度。
+; 值越高，在物体边界越强硬地阻断锐化（减少光晕）。
+; 值越低，允许跨越边缘做更多锐化（更锐利，但风险更高）。
+; 2.0 - 600.0  - 默认（auto）为 4.0
+DADepthScale=auto
+
+; 边缘检测前忽略微小的深度差异。
+; 值越高，越能抑制细微深度变化带来的噪点和闪烁。
+; 值越低，越能保留细节，但可能对深度噪声有反应。
+; 0.005 - 0.03  - 默认（auto）为 0.01
+DADepthBias=auto
+
+; 把最终图像限制在 [0, 1] 范围内。
+; 防止亮光晕或负色之类过冲伪影。
+; 推荐用于 LDR 管线；HDR 下视色调映射而定，可选。
+; true 或 false - 默认（auto）为 false
+DAClampOutput=auto
+
+
+; -------------------------------------------------------
+[Magnifier]
+; -------------------------------------------------------
+; 启用放大镜
+; 默认仅在菜单显示时可见，并跟随光标
+; true 或 false - 默认（auto）为 false
+Enabled=auto
+
+; 放大镜半径，按屏幕高度的百分比
+; 浮点数 - 默认（auto）为 15.0
+Size=auto
+
+; 放大镜的缩放倍数
+; 2 - 20 - 默认（auto）为 4
+ZoomFactor=auto
+
+; 放大镜黑边宽度，按屏幕高度的百分比
+; 0.0 - 2.0 - 默认（auto）为 0.3
+BorderSize=auto
+
+; 放大镜相对鼠标位置的偏移，单位像素
+; -1000 - 1000 - 默认（auto）为 0
+CursorOffsetX=auto
+CursorOffsetY=auto
+
+; 放大镜的固定位置，按屏幕百分比
+; 两个值都设置后，放大镜切换为固定模式
+; 固定模式下放大镜始终可见，即使菜单未打开
+; 0 - 100 - 默认（auto）为未设置
+StaticPosX=auto
+StaticPosY=auto
+
+
+; -------------------------------------------------------
+[Log]
+; -------------------------------------------------------
+; 是否生成日志文件
+; true 或 false - 默认（auto）为 false
+LogToFile=true
+
+; 文件日志的详细程度
+; 0 = Trace / 1 = Debug / 2 = Info / 3 = Warning / 4 = Error
+; 默认（auto）为 0 = Trace
+LogLevel=2
+
+; 输出日志到控制台（出于性能考虑，日志级别始终为 2 Info）
+; true 或 false - 默认（auto）为 false
+LogToConsole=auto
+
+; 输出日志到 NVNGX API
+; true 或 false - 默认（auto）为 false
+LogToNGX=auto
+
+; 输出日志到调试输出
+; true 或 false - 默认（auto）为 false
+LogToDebug=auto
+
+; 打开控制台窗口显示日志
+; true 或 false - 默认（auto）为 false
+OpenConsole=auto
+
+; 设为 false 时，每次 OptiScaler 会话都新建一个日志文件
+; true 或 false - 默认（auto）为 true
+SingleFile=auto
+
+; 自定义日志文件名
+; 也可以为日志指定自定义"路径"
+; 默认（auto）为当前文件夹下的 OptiScaler.log
+LogFileName=auto
+
+; 启用异步日志
+; true 或 false - 默认（auto）为 true
+LogAsync=auto
+
+; 异步日志线程数
+; 1 - 8 - 默认（auto）为 1
+LogAsyncThreads=auto
+
+
+; -------------------------------------------------------
+[InitFlags]
+; -------------------------------------------------------
+; 强制在初始化标志中加入 ENABLE_AUTOEXPOSURE
+; 部分虚幻引擎游戏需要，可修复颜色问题，尤其是暗部
+; true 或 false - 默认（auto）为 DLSS 自身的值
+AutoExposure=auto
+
+; 强制在初始化标志中加入 HDR_INPUT_COLOR
+; true 或 false - 默认（auto）为 DLSS 自身的值
+HDR=auto
+
+; 强制在初始化标志中加入 INVERTED_DEPTH
+; true 或 false - 默认（auto）为 DLSS 自身的值
+DepthInverted=auto
+
+; 强制在初始化标志中加入 JITTERED_MV 标志
+; true 或 false - 默认（auto）为 DLSS 自身的值
+JitterCancellation=auto
+
+; 强制在初始化标志中加入 HIGH_RES_MV 标志
+; true 或 false - 默认（auto）为 DLSS 自身的值
+DisplayResolution=auto
+
+; 强制从初始化标志中移除 RESPONSIVE_PIXEL_MASK
+; true 或 false - 默认（auto）为 true
+DisableReactiveMask=auto
+
+
+; -------------------------------------------------------
+[UpscaleRatio]
+; -------------------------------------------------------
+; 设为 true 以启用内部渲染分辨率覆盖
+; true 或 false - 默认（auto）为 false
+UpscaleRatioOverrideEnabled=auto
+
+; 设置强制的超分比例值
+; 默认（auto）为 1.3
+UpscaleRatioOverrideValue=auto
+
+
+; -------------------------------------------------------
+[QualityOverrides]
+; -------------------------------------------------------
+; 设为 true 以启用自定义画质档位覆盖
+; true 或 false - 默认（auto）为 false
+QualityRatioOverrideEnabled=auto
+
+; 为每个画质档位设置自定义超分比例
+;
+; 默认（auto）值：
+; DLAA					: 1.0
+; Ultra Quality         : 1.3
+; Quality               : 1.5
+; Balanced              : 1.7
+; Performance           : 2.0
+; Ultra Performance     : 3.0
+QualityRatioDLAA=auto
+QualityRatioUltraQuality=auto
+QualityRatioQuality=auto
+QualityRatioBalanced=auto
+QualityRatioPerformance=auto
+QualityRatioUltraPerformance=auto
+
+
+; -------------------------------------------------------
+[DRS]
+; -------------------------------------------------------
+; 设为 true 以把 DRS 最小分辨率限制在渲染分辨率
+; true 或 false - 默认（auto）为 false
+DrsMinOverrideEnabled=auto
+
+; 设为 true 以把 DRS 最大分辨率限制在渲染分辨率
+; true 或 false - 默认（auto）为 false
+DrsMaxOverrideEnabled=auto
+
+
+; -------------------------------------------------------
+[HDR]
+; -------------------------------------------------------
+; 强制 HDR 色彩空间
+; true 或 false - 默认（auto）为 false
+ForceHDR=auto
+
+; 使用 HDR10
+; 用 DXGI_FORMAT_R10G10B10A2_UNORM 代替 DXGI_FORMAT_R16G16B16A16_FLOAT
+; true 或 false - 默认（auto）为 false
+UseHDR10=auto
+
+; 跳过设置 HDR 色彩空间
+; true 或 false - 默认（auto）为 false
+SkipColorSpace=auto
+
+
+; -------------------------------------------------------
+[V-Sync]
+; -------------------------------------------------------
+; 启用垂直同步控制
+; true 或 false - 默认（auto）为 false
+OverrideVsync=auto
+
+; 强制的垂直同步值
+; true 或 false - 默认（auto）为未选择
+ForceVsync=auto
+
+; 垂直同步的同步间隔值
+; 0 到 3 - 默认（auto）为未选择
+SyncInterval=auto
+
+
+; -------------------------------------------------------
+[Anisotropy]
+; -------------------------------------------------------
+; 覆盖纹理的最大各向异性/各向异性过滤
+; 2、4、8、16 - 默认（auto）为禁用
+AnisotropyOverride=auto
+
+; 把比较过滤改为各向异性过滤
+; true 或 false - 默认（auto）为 true
+ModifyComparison=auto
+
+; 把最小/最大过滤改为各向异性过滤
+; true 或 false - 默认（auto）为 true
+ModifyMinMax=auto
+
+; 对点采样过滤跳过覆盖
+; true 或 false - 默认（auto）为 true
+SkipPointFilter=auto
+
+
+; -------------------------------------------------------
+[Mipmap]
+; -------------------------------------------------------
+; 覆盖 Mipmap LOD 偏移值
+; -15.0 - 15.0 - 默认（auto）为禁用
+MipmapBiasOverride=auto
+
+; 对 LOD 偏移使用固定值
+; true 或 false - 默认（auto）为 false
+MipmapBiasFixedOverride=auto
+
+; 把覆盖值当作缩放倍数使用
+; true 或 false - 默认（auto）为 false
+MipmapBiasScaleOverride=auto
+
+; 覆盖所有纹理的 LOD 偏移（通常只覆盖 < 0 的值）
+; true 或 false - 默认（auto）为 false
+MipmapBiasOverrideAll=auto
+
+
+; -------------------------------------------------------
+[ProcessFilter]
+; -------------------------------------------------------
+; 只注入到此指定进程（不区分大小写）
+; 示例：TargetProcessName=endfield.exe
+; 默认（auto）为禁用（注入所有进程）
+TargetProcessName=auto
+
+; 不注入到此指定进程（不区分大小写）
+; 进程名用竖线 "|" 分隔 - 默认（auto）为
+; crashpad_handler.exe 等 - 在 Config.h 的 ProcessFilter 中列出
+ProcessExclusionList=auto
+
+
+; -------------------------------------------------------
+[Hotfix]
+; -------------------------------------------------------
+; 启用从 Github 检查最新版本
+; true 或 false - 默认（auto）为 true
+CheckForUpdate=auto
+
+; 启用对 Steam 和 Epic 叠加层的屏蔽
+; 同时会屏蔽 Steam Input
+; true 或 false - 默认（auto）为 false，启用 OptiFG 时为 true
+DisableOverlays=auto
+
+; 用主动轮询输入代替挂钩 WndProc
+; 可能帮助那些无法正确捕获输入的游戏
+; 缺点是菜单打开时无法屏蔽输入
+; true 或 false - 默认（auto）为 false
+ManualInputPolling=auto
+
+; 为帧生成交换链模拟可等待对象的事件信号
+; true 或 false - 默认（auto）为 false
+SimulateWaitableObject=auto
+
+; OptiScaler 会延迟加载 Reshade 并先创建 D3D12 设备
+; 此选项可避免与 Luma 及部分其他 ReShade mod 的警告/崩溃
+; 使用 Luma mod 时应启用
+; true 或 false - 默认（auto）为 false
+CreateD3D12DeviceForLuma=auto
+
+; OptiScaler 会尝试强制使用高性能 GPU
+; true 或 false - 默认（auto）为 false
+PreferDedicatedGpu=auto
+
+; OptiScaler 只报告第一个高性能 GPU
+; true 或 false - 默认（auto）为 false
+PreferFirstDedicatedGpu=auto
+
+; 把内部渲染分辨率的宽高取整到本值的倍数
+; 2、4、8、16 ...  - 默认（auto）为禁用
+RoundInternalResolution=auto
+
+; 跳过前 n 帧的超分
+; n 为整数 - 默认（auto）为禁用
+SkipFirstFrames=auto
+
+; 超分后恢复上次使用的计算签名
+; true 或 false - 默认（auto）为 false
+RestoreComputeSignature=auto
+
+; 超分后恢复上次使用的图形签名
+; true 或 false - 默认（auto）为 false
+RestoreGraphicSignature=auto
+
+; 尝试追踪签名变化以便完整恢复
+; 对使用 bindless 的游戏有用
+; true 或 false - 默认（auto）为 false
+ExtendedStateRestore=auto
+
+; 为 RCAS、输出缩放和遮罩偏置使用预编译着色器
+; true 或 false - 默认（auto）为 true
+UsePrecompiledShaders=auto
+
+; 要修复的颜色纹理资源状态，用于解决 AMD 显卡上的彩虹色问题（多为 UE 游戏）
+; 对 AMD 显卡上的 UE 引擎游戏，把 Color 设为 4（D3D12_RESOURCE_STATE_RENDER_TARGET）
+ColorResourceBarrier=auto
+; 对 AMD 显卡上的 UE 引擎游戏，把 MotionVector 设为 8（D3D12_RESOURCE_STATE_UNORDERED_ACCESS）
+MotionVectorResourceBarrier=auto
+DepthResourceBarrier=auto
+ColorMaskResourceBarrier=auto
+ExposureResourceBarrier=auto
+OutputResourceBarrier=auto
+
+; 默认（auto）为关闭状态修正
+; 这些设置定义了各资源的初始资源
+; 状态，并插入资源屏障以修正到正确状态
+;
+; 常见的资源屏障状态
+; ----------------------------------------------------
+; D3D12_RESOURCE_STATE_COMMON = 0,
+; D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER = 1,
+; D3D12_RESOURCE_STATE_INDEX_BUFFER	= 2,
+; D3D12_RESOURCE_STATE_RENDER_TARGET = 4,
+; D3D12_RESOURCE_STATE_UNORDERED_ACCESS	= 8,
+; D3D12_RESOURCE_STATE_DEPTH_WRITE = 16,
+; D3D12_RESOURCE_STATE_DEPTH_READ = 32,
+; D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE = 64,
+; D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE = 128,
+;------------------------------------------------------
+;
+; 所有状态值可在此查看
+; https://learn.microsoft.com/en-us/windows/win32/api/d3d12/ne-d3d12-d3d12_resource_states
+
+[DlssNr]
+ToggleKey=auto
+; DLSS 5 神经渲染（Neural Rendering）。在超分器的输出上合成细节，发生在帧生成看到它之前。
+;
+; 需要来自随附该文件驱动的 nvngx_dlssnr.dll，放在 OptiScaler 或游戏可执行文件旁边，
+; 另外还需要本包中的 nvngx.dll_dlssnr.dll。该代码段会拒绝模块路径中不含
+; "nvngx.dll" 的调用方，这也正是第二个文件存在的唯一原因。
+;
+; 未公开、直接驱动，因此完全不受官方支持。
+; true 或 false - 默认（auto）为 false
+Enabled=auto
+
+; 画面向模型结果靠拢的程度。模型的结果不是叠加到画面上：它是一张完整的画面，
+; 会重新缩放使其亮度落在原始画面认为应该在的位置，本项则在两者之间混合。
+; 0 会完全还原超分器的原始输出，1 是模型的画面，大于 1 则继续越过它。
+; 默认（auto）为 1.0
+TransferStrength=auto
+
+; 模型的颜色是否随其亮度一起到来。0 完全保留游戏自身的色相，只让亮度承载模型的判断；
+; 1 则连同模型自己的色相一起带来。
+; 默认（auto）为 1.0
+ColourStrength=auto
+
+; 编码映射到显示白点所对应的线性值，它属于游戏自身的曝光而不是某个固定数值：
+; 实测某游戏内的帧均值从 0.065 到 185 都有。保持自动时，会从画面中实测得出。
+; 这确实会改变结果，而不只是影响模型看到什么：交给模型的那张图也是合成时参与加权的
+; 亮度之一。仅适用于线性缓冲区；游戏自报已完成色调映射的画面会被原样跳过。
+; true 或 false - 默认（auto）为 true
+; 在模型看到画面之前对上述白点做乘法——即"纸白"控制。
+; 默认（auto）为 1.0
+WhitePointScale=auto
+
+; 该通道允许把任一像素提亮的上限，以它原有亮度的倍数表示。变暗不受限制。
+; 用于防止模型把明亮光源变成一串彩色色块。
+; 默认（auto）为 2.0
+MaxRatio=auto
+
+; 模型以画面的多大比例来工作。画面本身从不被缩小——只有模型自己的计算是以小尺寸
+; 完成再放大。开销随本值的平方下降。高于 1.0（DX12 与 Vulkan）时模型会做超采样：
+; 它在高于原生的分辨率上运行，再把结果平均降采样回来。
+; 默认（auto）为 1.0
+WorkingScale=auto
+
+; 当 WorkingScale 高于 1.0（超采样）时，用于把模型结果平均回原生分辨率的降采样器
+; 与 OutputScaling/Downscaler 相互独立，两者可以不同。0 FSR1、1 Bicubic、
+; 2 CatmullRom、3 Lanczos2、4 Lanczos3、5 Kaiser2、6 Kaiser3、7 MAGIC。
+; 默认（auto）为 4（Lanczos3）
+ScalingDownscaler=auto
+
+; 0 关闭，1 显示模型看到的画面，2 显示模型的原始结果，3 显示它所做的改动并放大二十倍。
+; 差异视图中若是一片均匀的灰色，说明模型没有做任何事。
+; 默认（auto）为 0
+DebugView=auto
+
+; 该通道首次运行时，把配对的前后帧写入 OptiScaler 旁边的 dlssnr-capture 文件夹。
+; 上限为八帧，每次运行都会覆盖上一次的内容。
+; true 或 false - 默认（auto）为 true
+AutoCapture=auto
+
+; 模型控制项。预设会在模型创建时固化，因此需要重启；其余项实时生效。
+; 预设与风格均未公开，且预设的刻度与超分辨率或光线重建所用的不是同一套。
+; 默认（auto）为 0
+Preset=auto
+Style=auto
+; 默认（auto）为 1.0
+Intensity=auto
+LocalStructure=auto
+LocalTone=auto
+; -1 表示跟随局部结构，这是模型自身的默认行为，而不是强度为零。
+; 默认（auto）为 -1.0
+SkinStructure=auto
+; true 或 false - 默认（auto）为 true
+AutoMask=auto

@@ -1,0 +1,28 @@
+# payload 里的第三方二进制不入库（版权 + 体积）
+payload/*
+!payload/README.md
+
+# 构建产物
+dist/
+build/
+.buildenv/
+.venv/
+*.pkg
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# 运行时产物
+*.log
+*.ini.bak
+*.tmp
+.opti_write_test
+winpos.txt
+preview.png
+
+# 编辑器
+.vscode/
+.idea/
+*.swp
