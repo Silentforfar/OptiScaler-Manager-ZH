@@ -7,7 +7,6 @@ import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
 from tkinter.scrolledtext import ScrolledText
 
-import gamesets
 import installer
 import scanner
 import store
@@ -132,7 +131,6 @@ class App(tk.Tk):
         ttk.Button(bar, text="卸载所选", command=self.do_uninstall).pack(side="left", padx=6)
         ttk.Button(bar, text="打开游戏目录", command=self.open_selected_dir).pack(side="left", padx=6)
         ttk.Button(bar, text="校验完整性", command=self.do_verify).pack(side="left", padx=6)
-        ttk.Button(bar, text="游戏设置", command=self.open_game_settings).pack(side="left", padx=6)
 
         wrap = ttk.Frame(f, style="Card.TFrame")
         wrap.pack(fill="both", expand=True)
@@ -370,91 +368,6 @@ class App(tk.Tk):
             self.q.put(lambda: messagebox.showinfo(
                 "卸载完成", "已删除 %d 个文件，还原 %d 个备份。" % (res["removed"], res["restored"])))
         self._run(job)
-
-    # ---------- 游戏设置 ----------
-    def open_game_settings(self):
-        it = self._selected_item()
-        if not it:
-            return
-        path, items = gamesets.read_cod_panel()
-        if not path or not items:
-            messagebox.showinfo(
-                "暂不支持",
-                "目前只能读取 Call of Duty 系列的游戏设置。\n\n"
-                "其它游戏的画质配置格式各不相同（多半是二进制或加密的），"
-                "没法用同一套逻辑安全地改。")
-            return
-
-        win = tk.Toplevel(self)
-        win.title("游戏设置 — %s" % it["game_name"])
-        win.geometry("680x580")
-        win.configure(bg=BG)
-        win.transient(self)
-        win.grab_set()
-
-        head = ttk.Frame(win, padding=(18, 16, 18, 6))
-        head.pack(fill="x")
-        ttk.Label(head, text="游戏内设置", font=(UI_FONT, 13, "bold")).pack(anchor="w")
-        ttk.Label(head, text=path, style="Hint.TLabel", wraplength=620).pack(anchor="w", pady=(4, 0))
-        ttk.Label(head, text="改完要重启游戏才生效；保存前会自动备份原文件。",
-                  style="Hint.TLabel").pack(anchor="w", pady=(4, 0))
-
-        body = ttk.Frame(win, padding=(18, 8))
-        body.pack(fill="both", expand=True)
-        pairs = []
-        for r, item in enumerate(items):
-            ttk.Label(body, text=item["label"]).grid(row=r, column=0, sticky="w", pady=7)
-            if item["kind"] == "bool":
-                cur = "true" if str(item["value"]).strip().lower() == "true" else "false"
-                var = tk.StringVar(value=cur)
-                w = ttk.Combobox(body, textvariable=var, values=["true", "false"],
-                                 state="readonly", width=24)
-            else:
-                var = tk.StringVar(value=item["value"])
-            if item["kind"] == "bool":
-                pass
-            elif item["kind"] == "choice" and item["options"]:
-                w = ttk.Combobox(body, textvariable=var, values=item["options"],
-                                 state="readonly", width=24)
-            else:
-                w = ttk.Entry(body, textvariable=var, width=26)
-            w.grid(row=r, column=1, sticky="w", padx=(14, 8))
-            ttk.Label(body, text="@" + item["profile"], style="Hint.TLabel"
-                      ).grid(row=r, column=2, sticky="w")
-            pairs.append((item, var))
-
-        foot = ttk.Frame(win, padding=(18, 6, 18, 16))
-        foot.pack(fill="x")
-
-        def _val(item, var):
-            v = var.get()
-            if item["kind"] == "bool":
-                return "true" if v else "false"
-            return str(v)
-
-        def do_save():
-            changed = [(i, _val(i, v)) for i, v in pairs
-                       if _val(i, v) != str(i["value"]).strip()]
-            if not changed:
-                win.destroy()
-                return
-            names = "\n".join("  · %s = %s" % (i["label"], v.get()) for i, v in changed)
-            if not messagebox.askyesno("确认修改", "要修改这些项吗？\n\n%s" % names, parent=win):
-                return
-            try:
-                bk = gamesets.backup(path)
-                for i, v in changed:
-                    gamesets.set_value(path, i["key"], i["profile"], v)
-            except Exception as e:
-                messagebox.showerror("保存失败", str(e), parent=win)
-                return
-            self.log("游戏设置已保存 %d 项（备份 %s）" % (len(changed), os.path.basename(bk)), "ok")
-            messagebox.showinfo("已保存", "重启游戏后生效。", parent=win)
-            win.destroy()
-
-        ttk.Button(foot, text="取消", command=win.destroy).pack(side="right")
-        ttk.Button(foot, text="保存修改", style="Accent.TButton",
-                   command=do_save).pack(side="right", padx=(0, 8))
 
     # ---------- 安装 ----------
     def do_scan(self):
